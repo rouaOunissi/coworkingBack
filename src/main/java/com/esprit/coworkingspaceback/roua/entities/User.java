@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -17,10 +18,12 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 
+
 public class User implements Serializable , UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long idUser ;
     private String firstName ;
     private String lastName ;
@@ -29,6 +32,9 @@ public class User implements Serializable , UserDetails {
     private int numTel ;
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @OneToMany//(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<Reclamation> userReclamations;
 
 
 
