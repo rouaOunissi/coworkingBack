@@ -18,10 +18,12 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 
+
 public class User implements Serializable , UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long idUser ;
     private String firstName ;
     private String lastName ;
@@ -32,6 +34,10 @@ public class User implements Serializable , UserDetails {
     private Role role;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<Reservation> reservations;
+
+    @OneToMany//(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<Reclamation> userReclamations;
+
 
 
     @Override
