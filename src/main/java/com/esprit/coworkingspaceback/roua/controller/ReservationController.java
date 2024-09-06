@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/api/reservations")
 public class ReservationController {
 
@@ -17,14 +18,16 @@ public class ReservationController {
     private ReservationService reservationService;
 
     @PostMapping
-    public ResponseEntity<Reservation> createReservation(@RequestBody Reservation reservation) {
+    public ResponseEntity<?> createReservation(@RequestBody Reservation reservation) {
         try {
             Reservation savedReservation = reservationService.saveReservation(reservation);
             return new ResponseEntity<>(savedReservation, HttpStatus.CREATED);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid data: " + e.getMessage());
         }
     }
+
+
 
     @GetMapping
     public ResponseEntity<List<Reservation>> getAllReservations() {
