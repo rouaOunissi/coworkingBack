@@ -1,0 +1,29 @@
+version: '3'
+services:
+  mysql-container:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: rihem
+    networks:
+      - coworking-network
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  coworking-back:
+    image: roua123/coworking-back:latest
+    depends_on:
+      - mysql-container
+    networks:
+      - coworking-network
+    ports:
+      - "8080:8080"
+    entrypoint: ["/wait-for-it.sh", "mysql-container", "3306", "--", "java", "-jar", "/app/app.jar"]
+
+networks:
+  coworking-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
