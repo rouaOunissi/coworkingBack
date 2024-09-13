@@ -1,29 +1,37 @@
-version: '3'
+version: "3.8"
+
 services:
-  mysql-container:
-    image: mysql:8
+  mysqldb:
+    image: mysql:5.6
+    restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: rihem
-    networks:
-      - coworking-network
+      - MYSQL_ROOT_PASSWORD=
+      - MYSQL_DATABASE=coworkingspace3
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
     ports:
       - "3306:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - db:/var/lib/mysql
 
-  coworking-back:
-    image: roua123/coworking-back:latest
+  app:
     depends_on:
-      - mysql-container
-    networks:
-      - coworking-network
+      - mysqldb
+    build: .
+    restart: on-failure
     ports:
-      - "8080:8080"
-    entrypoint: ["/wait-for-it.sh", "mysql-container", "3306", "--", "java", "-jar", "/app/app.jar"]
-
-networks:
-  coworking-network:
-    driver: bridge
+      - "8086:8086"
+    environment:
+      SPRING_APPLICATION_JSON: '{
+        "spring.datasource.url"  : "jdbc:mysql://mysqldb:3306/devops?useSSL=false",
+        "spring.datasource.username" : "root",
+        "spring.datasource.password" : "rihem",
+        "spring.jpa.properties.hibernate.dialect" : "org.hibernate.dialect.MySQL8Dialect",
+        "spring.jpa.hibernate.ddl-auto" : "update"
+      }'
+    volumes:
+      - .m2:/root/.m2
+    stdin_open: true
+    tty: true
 
 volumes:
-  mysql_data:
+  db:
